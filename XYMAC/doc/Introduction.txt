@@ -1,0 +1,39 @@
+/* Created by Lu Zheng, 2011.04.16 */
+---------------------------------------------------------------
+which allows you to see the footnotes. Then, type over sections
+---------------------------------------------------------------
+
+INTRODUCTION
+
+1. Why wireless sensor networks need energy efficiency.
+text:
+Wireless sensor networks often consist of a large number of sensor nodes deployed in a large area for information collection. Sensor nodes are interconnected via wireless in an ad-hoc way. The main challenge of WSNs is to establish a reliable network with strictly constraint energy of each sensor node. Since it's very difficult to charge or replace batteries for such a large amount of sensor nodes.
+
+2. How to enable energy efficiency? - duty cycle.
+text:
+In most scenarios, unlike typical wireless networks such as WLAN, sensor nodes of WSNs usually generate very low traffic load. So idle listening is becoming the most significant energy consumption of WSNs. Nodes drain out their batteries by continuously listening on the idle channel waiting for a frame from other nodes. To reduce the idle listening of sensor nodes, a mechanism called duty cycling has been proposed. In duty cycling MAC protocol, sensor nodes periodically switch their radio between sleep state and active state. The parameter duty cycle defines the ratio of active period and sleep period reflects the energy consumption of WSNs.
+
+3. classify of duty cycle, synchronized way and asynchronous way. 
+text:
+Usually, sensor nodes will only wake up for a very small ratio of the period of a duty cycle to mitigate most of the idle listening. To guarantee successful packet transmission, there are two typical approaches for sensor nodes to wake up for the upcoming packets destined to them. The first approach is synchronized which is adopted by SMAC, TMAC, etc. In these protocols, sensor nodes self-organized into several adjacent clusters. Nodes within the same cluster keep the same wakeup schedule, so that all nodes in a cluster wakeup at the same time to communicate. However, to maintain synchronization of each cluster in a distributed way, numerous overhead packets have been introduced. The second approach is an asynchronous way, usually refer to as preamble sampling, which is used in protocols such as BMAC. Nodes don't need to synchronize with each other to maintain a common wakeup schedule in such protocols. Once a pending packet is waiting for transmission, transmitter will send a preamble prior to the transmission of the data packet to inform the target receiver of upcoming transmission. The length of preamble should be longer than the period of duty cycle of target receiver to wake up the target receiver. Receivers sampling the channel at each active period, and stay awake if the channel is sensed busy to receive the following data packets.
+
+4. short preamble protocols and advantages it brings.
+text:
+Although preamble sampling protocols is energy efficient under low traffic load by keeping a very low duty cycle without requirement of overheads introduced by synchronization. The long preamble introduced by these protocols consumes extra energy at both transmitter and receiver. Since the transmitter keeps transmit the whole preamble even if the target receiver is already wakeup. And the receivers, even those non-target receivers, have to receive half of the preamble in average. So short preamble MAC protocols such as MFP and X-MAC have been proposed to solve such problems. The short preamble MAC protocols employ a series of small packets, which we refer to as short preambles, to replace the continuous long preamble. Each of the short preambles usually carries an indicator of the upcoming data packets, such as target receiver's address or some kind of reflection of the data contents. These protocols avoid the reception of long preamble and unneeded data frames thus save substantial energy compared to typical preamble sampling protocols.
+
+5. two kinds of short preamble protocls, continuous and strobed 
+text:
+In MFP-like short preamble MAC protocols, target receiver won't send an ACK to transmitter to stop the following transmission of short preambles after a successful reception of a short preamble. So a full-length preamble will always be transmitted and all the receivers in one-hop range of transmitter will be wakeup and receive at least one short preamble, which make it suboptimal in terms of energy efficiency. Another kind of short preamble MAC protocols such as X-MAC insert pauses between consecutive short preambles. This allow target receiver to send an ACK to transmitter after successfully receive a short preamble to stop the transmission of remaining short preambles. In this way, average preamble length has been reduced to approximate half of the period of duty cycle thus reduce the number of unnecessary waked non-target receivers and latency of each data packet. However, pauses introduced by such protocols are long enough to guarantee the reception of ACK packets. This will increase the sampling period at receivers, since a sampling period should be longer than the pauses to correctly detect the ongoing transmission, thus do not guarantee energy efficiency under low traffic load.
+
+6. how to solve the problems.
+6.1 early termination
+6.2 broadcast natural
+6.3 check idle ways
+text:
+In this paper, we propose XY-MAC, to eliminate the requirement of long sampling period introduced by pauses between short preambles. The main idea of XY-MAC is to terminate those pauses at an early time by perform an ACK detection following by an successful transmission of an short preamble. The result of the ACK detection will determine whether transmitter should stay in receive state for the reception of the ACK packet or switch to transmit state for the transmission of remaining short preambles. This can reduce the required sampling period of receivers greatly. We present two ways to detect the ACK: CCA (Clear Channel Assessment), which is an prompt way; sync word detection, which is more reliable but extend the detection period. The XY-MAC can simply adapt to broadcast transmission by insert a sequence number into the short preambles just like MFP. A receiver simply receives the broadcast packets without sending an ACK to ensure all receivers in transmitter's range can receive the broadcast packet.
+
+7. the structure of the following paper
+text:
+The rest of the paper is organized as follows. We discuss the related works in Section II. Section III presents the design of XY-MAC protocol. We describe the implementation of XY-MAC and evaluate the performance in Section IV. Future works are given in Section V and Section VI concludes the paper.
+
+0. references:

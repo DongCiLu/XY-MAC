@@ -1,0 +1,25 @@
+/* Created by Lu Zheng, 2011.04.16 */
+---------------------------------------------------------------
+which allows you to see the footnotes. Then, type over sections
+---------------------------------------------------------------
+
+IMPLEMENTATION
+
+1. Introduction of hardwares
+text:
+To evaluate the performance of XY-MAC, we have implemented the protocol on wireless sensor nodes with an mcu of TI MSP430 working at 8MHz, and a CC2500 radio. The CC2500 operates in 2.4GHz ISM and SRD frequency band, with a configurable data rate up to 500 kBaud.
+
+2. System Parameters
+text:
+The current consumption of CC2500 in different state is shown in Table I. The current consumption is measured by using an oscilloscope to measure the voltage drop of a 17 Ohm resistor on the power supply cable. We use 2-FSK with a bit rate of 20kbps. The output power is configured as -12dB. A sleep period of 500 ms is chosen for receiving nodes and the max preamble length is 1.2 times to sleep period to ensure the target receiver can be successfully waked up. We use the CCA approach for ACK detection, thus the time spend on ACK detection is approximate 1.5 ms, while a sampling period of 2 ms is adopted at receivers.
+Wo also implement X-MAC as a comparation protocol. The fixed length of pauses of X-MAC is set to 10 ms, while the sampling period at receivers is set to 12 ms accordingly.
+
+3. Frame structure
+text:
+The frame structure of short preamble packets and ACK packets are is shown in Fig. 5. PacketType field indicates the type of the packet, there are four types of packets in current system: Short preamble, ACK, Data and Broadcast preamble. The length of data field varies for different packet type. In Broadcast preamble, the countdown sequence number and the hash of broadcast data also locate in Data field.
+
+4. Current consumption
+text:
+The current consumption measured by oscilloscope through the voltage drop of a 17 Ohm resistor is shown in following figures. The current changes over time reflects the state switching of the radio transceiver. Fig. 2 and Fig. 3 illustrate the transmission of short preambles of X-MAC and XY-MAC seperately. In Fig. 2, the low level of current is the transmitting period of a single short preamble packet. while the high level of current is radio transceiver in receive state with input at sensitivity limit to perform an ACK detection. The mcu sleeps during the transmitting period and keeps reading the RSSI register on radio transceiver druing the ACK detecting period. In Fig. 3, we can see that the radio transceiver is left in receive state for 10 ms to receive the ACK from target receiver. The mcu is in sleep state in both transmitting and receiving period, only wakes up at the end of receiving period to set up the next transmission of a short preamble packets. By comparing these two figures, we can see that the length of pauses between short preamble packets is sharpened greatly by XY-MAC using the early termination mechanism. 
+Fig. 4 shows an successful reception of ACK from target receiver. After transmission of a short preamble packet, the radio transceiver is switched to receive state to perform an ACK detection. The channel is idle at the first, after a little while, the target receiver begins to transmit an ACk to the transmiter, and the channel is busy then. We can capture this procedure from the variation of current consumption, since the current consumption of the radio transceiver is different at receive state when the channel is at or well above sensitivity limit. After a successful reception of ACK from target receiver, the transmitter stop the transmission of remaining short preamble packets. In our implementation, the following data packet transmission is omitted. The transmitter and the receiver simply turn back to sleep after the ACK transmission.
+Fig. 5 shows an active period of sensor nodes, the sampling period of XY-MAC is approximate 2 ms, which greatly reduce the duty cycle to an acceptable level. Note that due to hardware limitation, the wake up time before entering receive state is about 1.5ms, and we perform a synthesizer calibration at the end of the active period, which takes approximate 700 us. So the total active period is about 5 ms in total.

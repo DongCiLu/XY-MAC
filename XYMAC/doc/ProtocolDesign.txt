@@ -1,0 +1,29 @@
+/* Created by Lu Zheng, 2011.04.16 */
+---------------------------------------------------------------
+which allows you to see the footnotes. Then, type over sections
+---------------------------------------------------------------
+
+PROTOCOLDESIGN
+
+1. Sharpen the pauses to reduce sampling period.
+text:
+The ultimate goal for XY-MAC is to reduce the sampling period at receivers to achieve energy efficiency. Short preamble protocols such as X-MAC reduce the average length of transmitted preambles for lower latency and energy efficiency. However, pauses introduced by these protocols increase the sampling period at receivers to an intolerable level. Therefore, such protocols can hardly be considered as energy efficiency, especially in low traffic load networks. To solve such problem, XY-MAC introduces a mechanism called early termination to sharpen those pauses when there is no ACK from target receiver. In this way, sampling period at receivers can be reduced greatly, thus upgrade the energy efficiency.
+
+1.1 Main idea - Early termination
+text:
+With a purpose of receiving an ACK from target receiver, the original length of pauses in current short preamble technology is designed larger than the duration of reception. Since only one ACK from target receiver is expected for each unicast transmissions, most pauses are just a waste of time and energy. To eliminate these redundant pauses, XY-MAC performs an ACK detection following each transmission of short preambles. The ACK detection failed when no ACK from target receiver is detected on the channle. This proves that the target receiver has not successfully received an short preamble. Since there is no contention of ACK transmission for a unicast case, and target receiver should send an ACK to inform the transmitter immediately after a successful reception of an short preamble even if it do not intend to receive the following data packets. In this case, the transmitter should keep on transmitting the remaining short preamble packets. So in XY-MAC, the transmitter will terminate the listening period immediately and switch its radio to transmit state for the following transmission of short preambles. This mechanism is called early termination. On the other hand, the target receiver has successfully received an short preamble and is transmitting an ACK to the transmitter if the ACK detection is asserted. The transmitter should stay on receive mode long enough to guarantee the reception of the ACK packet. Figure 1 illustrate how the XY-MAC works with early termination compared to X-MAC with fixed length pauses.
+
+1.2 CS before transmitting a packet to avoid false positive
+text:
+/*
+It should be noted that, to avoid false positive caused by other contending transmitters during ACK detection, a carrier sense period larger than the length of ACK detection should be employed before each data transmission.
+*/
+
+1.3 Different ways of ack detection
+text:
+There could be many approaches for ACK detection, in XY-MAC, two main approaches are employed: CCA (Clear Channel Assessment) and Sync Word Detection. CCA is a most popular way to detect the channel status, busy or idle. The thresholding based CCA is a poor technique as it may lead to false positives, which let the transmitter's radio keeps on receive state until timeout. If the target receiver wakes up at this very moment, it may miss current transmission. The CCA based on outlier detection proposed in BMAC improves the performance by distinguishing valid packets from noise when none outlier is found. Since the probability for a valid packet to have outliers is extremely low. Radio transceivers such as CC2500 have a function called sync word detection. A packet transmission will be asserted once a sync word is received and deasserted at the end of the packet. The length of pauses can be automatically adapted using this function. After a certain interval, related to preamble quality threshold and sync word qualifier in CC2500, if no packet transmission is asserted, the transmitter should switch to transmit state for the following short preamble transmission. When a packet transmission is asserted during this interval, the transmitter should stay in receive state until the packet transmission is deasserted, indicatng the end of the packet. ACK detection based on sync word detection is more reliable than based on CCA. But the introduced interval, which should be larger than the transimssion time of preamble (typical 4 bytes) and sync word (typically 2 bytes), will slightly increase the length of the pauses between short preamble packets. 
+
+2. Adapt to Broadcast
+text:
+Short preamble protocols with pauses such as X-MAC are more energy efficient for unicast communications, since it do not need a full-length preamble that wakes up all receives in range. But in case of broadcast communications, when a full-length preamble should always be performed, short preamble protocols such as MFP save more energy by eliminate redundant reception of broadcast packets. So the XY-MAC adds an sequence number in short preambles of broadcast communications. Unlike MFP, the sequence number is countdown to indicate the number of remaining short preamble packets. In this way, even if neighboring receivers have different duty cycles, each receiver can learn the time when data packets will be transmitted from the sequence number. Once successfully receive a short preamble, receivers simply turn off their radio and return to sleep instead of sending an ACK to transmitter to ensure all receivers in transmission range can be woken up. Receivers which intend to receive the broadcast packet will wake up again at the estimated start time of data packet transmission. A broadcast packet is acknowledged when former transmitter receive the short preambles of the same broadcast packet from receivers.
+

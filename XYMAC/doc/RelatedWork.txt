@@ -1,0 +1,35 @@
+/* Created by Lu Zheng, 2011.04.16 */
+---------------------------------------------------------------
+which allows you to see the footnotes. Then, type over sections
+---------------------------------------------------------------
+
+RELATEDWORK
+
+1. Overview
+text:
+Duty cycling MAC protocols can be divided into two categories, synchronized approach which maintains a common active/sleep period and asynchronous approach which is refer to as preamble sampling. The preamble sampling protocols can be further classified as typical preamble sampling protocols and short preamble sampling protocols. The representative protocols are discussed as below.
+
+2. SMAC
+text:
+SMAC is a milestone in this area. It provides a low duty cycle without the requirement of precise synchronization of the sensor network. The basic idea of SMAC is that nodes concurrently wake up for communication in an virtual cluster with a loose synchronization. A virtual cluster is formed by neighboring nodes in an distributed way during the beginning of the active period. Nodes in a cluster keep a common sleep schedule, while boundary nodes keep both clusters' sleep schedule. SMAC adopts a collision avoidance way by sending RTS/CTS prior to data packets. Irrelative nodes to the transmission will switch to sleep state to save more energy and will wake up at the end of the transmission. The main drawback of SMAC is that the active and sleep period are predefined and constant, which reduce the efficiency under variable traffic load.
+
+3. TMAC
+text:
+TMAC is an improvement of SMAC, whose main idea is to adaptively change the length of active period by enabling nodes to turn off their radio during active period when no further traffic is expected. In this way, TMAC is traffic adaptive in a certain extent and more energy efficient especially under low traffic load. A problem called early sleep is introduced by TMAC, since it partially breaks the synchronizations in a virtual cluster. The early sleep problem occurs when a node is the next hop of current transmission, enters sleep period untimely. So, the energy saving of TMAC is achieved at the cost of latency.
+The main energy waste of MAC protocols which maintain an common active/sleep period such as SMAC and TMAC is the overhead introduced by synchronization. The situation is even worse in low traffic case, since most nodes wake up without receiving any packet. Therefore, Preamble sampling MAC protocols have been proposed for such network.
+
+4. BMAC
+text:
+BMAC is an typical preamble sampling protocol which requires none synchronization effort among sensor nodes. All sensor nodes have a active/sleep schedule independent to others, while sensor nodes sample the channel during the active period. Nodes will return to sleep if channel has been sensed idle. When a data packet is waiting for transmission, the transmitter will send a preamble larger than the sleep period of the receiver. Once the channel is asserted as busy during the sampling period, nodes will stay in receive state for the upcoming data packet. Such mechanism called preamble sampling significantly reduce the energy consumption by eliminate overhead of synchronization and is energy efficient under low traffic load. The main drawback of BMAC is that a full length preamble is always transmitted, all receivers in range will be wake up and receive the remaining preamble half of total length in average.
+
+5. WiseMAC
+text:
+WiseMAC is another typical preamble sampling protocol, which eliminate the transmission of full length preamble by memorize the active/sleep schedule of neighboring nodes. In this way, WiseMAC can reduce the number of irrelative wake up receivers, also the average length of received preamble at each receiver. WiseMAC also dynamically change the preamble length to adaptive different traffic load. The drawback of WiseMAC is that, fist, wake up receivers still have to receive all the remaining preambles; second, it is not energy efficient for broadcast communications.
+There are two main problems of typical preamble sampling protocol such as BMAC and WiseMAC. One is that receivers won't know whether the data is worth receiving until the whole data packet has been received. Another one is that the reception of useless remaining preambles. These two problems degrade the energy efficiency of typical preamble sampling MAC protocols. Short preamble MAC protocols have been proposed to solve above problems.
+
+6. MFP
+text:
+MFP is a short preamble MAC protocol, which use a series of short preambles instead of a continuous long preamble. Each short preamble contains a sequence number field so that receivers and contending transmitters know when the data will be transmitted. The short preambles also contain an indicator of the data frames contents such as destination address or a hash of the data. When a short preamble is successfully received by a receiver, it can make a decision from the indicator whether the oncoming data packet is worth receiving. Although MFP reduces the average preamble length received at each receiver and eliminates the unwilling reception of the data packets. A full length preamble is still transmitted, thus wakes up all the receivers in range and leads to a larger latency.
+
+7. X-MAC
+X-MAC is another kind of short preamble MAC protocol, which inserts short pauses between preamble packets. This short pauses enable target receiver to send an early ACK to transmitter to stop the transmission of remaining short preambles. In this way, X-MAC achieves more energy efficient and reduces the latency at each hop. The main drawback of X-MAC is that the short pauses which it introduces are not "short" enough indeed. Since the pauses are long enough to receive the whole ACK packets. This will increase the sampling period at receivers which should be longer than the pauses between short preambles thus makes these protocols not energy efficient in light traffic load networks.
